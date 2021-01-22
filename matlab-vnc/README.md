@@ -19,7 +19,7 @@ The `Dockerfile` in this repository builds upon the base image `jupyter/base-not
 
 To build the Docker image, follow these steps:
 
-1. Select a base container image with a MATLAB R2020b or later (64 bit Linux) installation. If you need to create one, follow the steps at [Create a MATLAB Container Image](https://github.com/mathworks-ref-arch/matlab-dockerfile).
+1. Select a base container image with a MATLAB (64 bit Linux) installation. If you need to create one, follow the steps at [Create a MATLAB Container Image](https://github.com/mathworks-ref-arch/matlab-dockerfile).
 
 2. Open the `Dockerfile`, replace the name `matlab` with the name of the MATLAB image from step 1:
 
