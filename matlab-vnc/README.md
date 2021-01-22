@@ -28,7 +28,7 @@ To build the Docker image, follow these steps:
    ```
 
 3. MATLAB should be on the path in the image built used in step 1.
-   If it is not available, then edit the following line to point to you MATLAB installation:
+   If it is not available, then edit the following line to point to your MATLAB installation:
 
    ```
    COPY --from=matlab-install-stage ${BASE_ML_INSTALL_LOC} /usr/local/MATLAB
