@@ -28,18 +28,17 @@ To build the Docker image, follow these steps:
    ```
 
 3. MATLAB should be on the path in the image built used in step 1.
-   If it is not available, then edit the following line to point to your MATLAB installation:
+   If not, then edit the following line to point to your MATLAB installation:
 
    ```
-   COPY --from=matlab-install-stage ${BASE_ML_INSTALL_LOC} /usr/local/MATLAB
+   ARG BASE_ML_INSTALL_LOC=/tmp/matlab-install-location
    ```
 
    For example, if MATLAB is installed at the location `/opt/matlab/R2020b` change the line above to:
 
    ```
-   COPY --from=matlab-install-stage /opt/matlab/R2020b /usr/local/MATLAB
+   ARG BASE_ML_INSTALL_LOC=/opt/matlab/R2020b
    ```
-   and delete all lines in the Dockerfile that use the variable `BASE_ML_INSTALL_LOC`
 
 4. (Optional) To preconfigure a network license manager, open the `Dockerfile`, uncomment the line below, and replace `port@hostname` with the licence server address:
 

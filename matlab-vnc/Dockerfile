@@ -15,7 +15,10 @@ RUN export ML_INSTALL_LOC=$(which matlab) \
         ML_INSTALL_LOC=$(dirname $(dirname $(readlink -f ${ML_INSTALL_LOC}))); \
         echo "soft linking: " $ML_INSTALL_LOC " to" ${BASE_ML_INSTALL_LOC}; \
         ln -s ${ML_INSTALL_LOC} ${BASE_ML_INSTALL_LOC}; \
-    else echo "MATLAB was not found in your image."; exit 1; \
+    elif [ $BASE_ML_INSTALL_LOC = '/tmp/matlab-install-location' ]; then \
+        echo "MATLAB was not found in your image."; exit 1; \
+    else \
+        echo "Proceeding with user provided path to MATLAB installation: ${BASE_ML_INSTALL_LOC}"; \
     fi
 
 FROM jupyter/base-notebook
