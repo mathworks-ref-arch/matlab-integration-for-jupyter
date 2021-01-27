@@ -1,11 +1,11 @@
 # Copyright 2020 The MathWorks, Inc.
 
 # Argument shared across multi-stage build to hold location of installed MATLAB 
-ARG BASE_ML_INSTALL_LOC=/tmp/matlab-install-location3
+ARG BASE_ML_INSTALL_LOC=/tmp/matlab-install-location
 
 # Replace "matlab" with the Docker image that contains MATLAB
 # MATLAB should be available on the path in the Docker image
-FROM matlab:r2020b AS matlab-install-stage
+FROM matlab AS matlab-install-stage
 ARG BASE_ML_INSTALL_LOC
 
 # Run code to locate a MATLAB install in the base image and softlink

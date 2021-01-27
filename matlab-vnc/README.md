@@ -27,7 +27,7 @@ To build the Docker image, follow these steps:
    FROM matlab AS matlab-install-stage
    ```
 
-3. MATLAB should be on the path in the image built used in step 1.
+3. MATLAB must be on the system path in the image built in step 1.
    If not, then edit the following line to point to your MATLAB installation:
 
    ```
