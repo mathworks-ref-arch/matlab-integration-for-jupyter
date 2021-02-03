@@ -2,9 +2,10 @@
 
 FROM jupyter/base-notebook
 
+# Switch to root user
 USER root
 
-# Add MATLAB to the path
+# Put MATLAB on the PATH
 RUN ln -s /usr/local/MATLAB/bin/matlab /usr/local/bin/matlab
 
 # Install MATLAB dependencies
@@ -93,7 +94,7 @@ RUN mkdir -p ${NOVNC_PATH} \
      | tar -zxf - -C ${NOVNC_PATH} --strip=1 \
      && chown -R ${NB_USER}:users ${NOVNC_PATH}
 
-# Change user to jovyan from root as we do not want any changes to be made as root in the container
+# Switch back to notebook user
 USER $NB_USER
 
 # Get websockify

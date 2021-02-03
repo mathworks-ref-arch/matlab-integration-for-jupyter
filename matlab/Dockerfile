@@ -1,14 +1,37 @@
 # Copyright 2020 The MathWorks, Inc.
 
+# Argument shared across multi-stage build to hold location of installed MATLAB 
+ARG BASE_ML_INSTALL_LOC=/tmp/matlab-install-location
+
 # Replace "matlab" with the Docker image that contains MATLAB
-# MATLAB should be installed at /usr/local/MATLAB or other changes will need
-# to be made to this Dockerfile
+# MATLAB should be available on the path in the Docker image
 FROM matlab AS matlab-install-stage
+ARG BASE_ML_INSTALL_LOC
+
+# Run code to locate a MATLAB install in the base image and softlink
+# to BASE_ML_INSTALL_LOC for a latter stage to copy 
+RUN export ML_INSTALL_LOC=$(which matlab) \
+    && if [ ! -z "$ML_INSTALL_LOC" ]; then \
+        ML_INSTALL_LOC=$(dirname $(dirname $(readlink -f ${ML_INSTALL_LOC}))); \
+        echo "soft linking: " $ML_INSTALL_LOC " to" ${BASE_ML_INSTALL_LOC}; \
+        ln -s ${ML_INSTALL_LOC} ${BASE_ML_INSTALL_LOC}; \
+    elif [ $BASE_ML_INSTALL_LOC = '/tmp/matlab-install-location' ]; then \
+        echo "MATLAB was not found in your image."; exit 1; \
+    else \
+        echo "Proceeding with user provided path to MATLAB installation: ${BASE_ML_INSTALL_LOC}"; \
+    fi
 
 FROM jupyter/base-notebook
+ARG BASE_ML_INSTALL_LOC
 
 # Switch to root user
 USER root
+
+# Copy MATLAB install from supplied Docker image
+COPY --from=matlab-install-stage ${BASE_ML_INSTALL_LOC} /usr/local/MATLAB
+
+# Put MATLAB on the PATH
+RUN ln -s /usr/local/MATLAB/bin/matlab /usr/local/bin/matlab
 
 # Install MATLAB dependencies
 # Reference: https://github.com/mathworks-ref-arch/container-images/tree/master/matlab-deps
@@ -70,12 +93,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -
         xvfb \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
-# Put MATLAB on the PATH
-RUN ln -s /usr/local/MATLAB/bin/matlab /usr/local/bin/matlab
-
-# Copy MATLAB install from supplied Docker image
-COPY --from=matlab-install-stage /usr/local/MATLAB /usr/local/MATLAB
 
 # Switch back to notebook user
 USER $NB_USER

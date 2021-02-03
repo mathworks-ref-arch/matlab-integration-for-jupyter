@@ -5,6 +5,9 @@ FROM jupyter/base-notebook
 # Switch to root user
 USER root
 
+# Put MATLAB on the PATH
+RUN ln -s /usr/local/MATLAB/bin/matlab /usr/local/bin/matlab
+
 # Install MATLAB dependencies
 # Reference: https://github.com/mathworks-ref-arch/container-images/tree/master/matlab-deps
 RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install --no-install-recommends -y \
@@ -65,9 +68,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -
         xvfb \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
-# Put MATLAB on the PATH
-RUN ln -s /usr/local/MATLAB/bin/matlab /usr/local/bin/matlab
 
 # Switch back to notebook user
 USER $NB_USER
