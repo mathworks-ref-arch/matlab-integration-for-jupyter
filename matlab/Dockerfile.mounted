@@ -73,7 +73,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -
 USER $NB_USER
 
 # Install integration
-RUN python -m pip install https://github.com/mathworks/jupyter-matlab-proxy/archive/0.1.0.tar.gz
+RUN python -m pip install https://github.com/mathworks/jupyter-matlab-proxy/archive/v0.2.0.tar.gz
 
 # Ensure jupyter-server-proxy JupyterLab extension is installed
 RUN jupyter labextension install @jupyterlab/server-proxy
