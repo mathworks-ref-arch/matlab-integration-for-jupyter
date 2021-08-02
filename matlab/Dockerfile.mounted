@@ -10,7 +10,9 @@ RUN ln -s /usr/local/MATLAB/bin/matlab /usr/local/bin/matlab
 
 # Install MATLAB dependencies
 # Reference: https://github.com/mathworks-ref-arch/container-images/tree/master/matlab-deps
+# The following are the dependencies for R2021a
 RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install --no-install-recommends -y \
+        ca-certificates \
         libasound2 \
         libatk1.0-0 \
         libc6 \
@@ -26,6 +28,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -
         libgtk-3-0 \
         libnspr4 \
         libnss3 \
+        libodbc1 \
         libpam0g \
         libpango-1.0-0 \
         libpangocairo-1.0-0 \
@@ -35,7 +38,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -
         libselinux1 \
         libsm6 \
         libsndfile1 \
-        libtcl8.6 \
         libuuid1 \
         libx11-6 \
         libx11-xcb1 \
@@ -53,12 +55,15 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -
         libxt6 \
         libxtst6 \
         libxxf86vm1 \
-        zlib1g \
-        xkb-data \
+        locales \
+        locales-all \
+        make \
+        net-tools \
         procps \
-        ca-certificates \
         sudo \
-        locales locales-all \
+        tzdata \
+        unzip \
+        zlib1g \
     && apt-get clean \
     && apt-get -y autoremove \
     && rm -rf /var/lib/apt/lists/*
@@ -73,7 +78,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -
 USER $NB_USER
 
 # Install integration
-RUN python -m pip install https://github.com/mathworks/jupyter-matlab-proxy/archive/v0.2.0.tar.gz
+RUN python -m pip install jupyter-matlab-proxy
 
 # Ensure jupyter-server-proxy JupyterLab extension is installed
 RUN jupyter labextension install @jupyterlab/server-proxy
