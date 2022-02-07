@@ -1,85 +1,73 @@
-# Copyright 2021 The MathWorks, Inc.
+# Copyright 2021-2022 The MathWorks, Inc.
+# Builds Docker image with 
+# 1. MATLAB Integration for Jupyter
+# on a base image of jupyter/base-notebook.
+# Folder with the MATLAB installation needs to be mounted into the image at /opt/matlab
 
-FROM jupyter/base-notebook
+## Sample Build Command:
+# docker build --build-arg MATLAB_RELEASE=r2021b \
+#              --build-arg LICENSE_SERVER=12345@hostname.com \
+#              -t my_matlab_image_name .
+
+# Specify release of MATLAB being mounted. (use lowercase, default is r2021b)
+# Used to fetch & install MATLAB's s/w dependencies
+ARG MATLAB_RELEASE=r2021b
+
+# Optional Network License Server information in the form of port@hostname
+ARG LICENSE_SERVER
+
+# If LICENSE_SERVER is provided then SHOULD_USE_LICENSE_SERVER will be set to "_use_lm"
+ARG SHOULD_USE_LICENSE_SERVER=${LICENSE_SERVER:+"_with_lm"}
+
+# Default DDUX information
+ARG MW_CONTEXT_TAGS=MATLAB_PROXY:JUPYTER:MOUNTED:V1
+
+# Base Jupyter image without LICENSE_SERVER
+FROM jupyter/base-notebook AS base_image
+
+# Base Jupyter image with LICENSE_SERVER
+FROM jupyter/base-notebook AS base_image_with_lm
+ARG LICENSE_SERVER
+# If license server information is available, then use it to set environment variable
+ENV MLM_LICENSE_FILE=${LICENSE_SERVER}
+
+# Select base Jupyter image based on whether LICENSE_SERVER is provided
+FROM base_image${SHOULD_USE_LICENSE_SERVER}
+ARG MW_CONTEXT_TAGS
+ARG MATLAB_RELEASE
 
 # Switch to root user
 USER root
+ENV DEBIAN_FRONTEND="noninteractive" TZ="Etc/UTC"
 
 # Put MATLAB on the PATH
-RUN ln -s /usr/local/MATLAB/bin/matlab /usr/local/bin/matlab
+RUN ln -s /opt/matlab/bin/matlab /usr/local/bin/matlab
 
-## Install MATLAB dependencies
-# Please update this list for the version of MATLAB you are using.
-# Listed below are the dependencies of R2021b for Ubuntu 20.04
-# Reference: https://github.com/mathworks-ref-arch/container-images/tree/master/matlab-deps/r2021b
-RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install --no-install-recommends -y \
-    ca-certificates \
-    libasound2 \
-    libatk-bridge2.0-0 \
-    libatk1.0-0 \
-    libatspi2.0-0 \
-    libc6 \
-    libcairo-gobject2 \
-    libcairo2 \
-    libcap2 \
-    libcrypt1 \
-    libcups2 \
-    libdbus-1-3 \
-    libdrm2 \
-    libfontconfig1 \
-    libgbm1 \
-    libgdk-pixbuf2.0-0 \
-    libglib2.0-0 \
-    libgomp1 \
-    libgstreamer-plugins-base1.0-0 \
-    libgstreamer1.0-0 \
-    libgtk-3-0 \
-    libnspr4 \
-    libnss3 \
-    libodbc1 \
-    libpam0g \
-    libpango-1.0-0 \
-    libpangocairo-1.0-0 \
-    libpangoft2-1.0-0 \
-    libpython3.9 \
-    libsm6 \
-    libsndfile1 \
-    libssl1.1 \
-    libuuid1 \
-    libx11-6 \
-    libx11-xcb1 \
-    libxcb-dri3-0 \
-    libxcb1 \
-    libxcomposite1 \
-    libxcursor1 \
-    libxdamage1 \
-    libxext6 \
-    libxfixes3 \
-    libxft2 \
-    libxi6 \
-    libxinerama1 \
-    libxrandr2 \
-    libxrender1 \
-    libxt6 \
-    libxtst6 \
-    libxxf86vm1 \
-    locales \
-    locales-all \
-    make \
-    net-tools \
-    procps \
-    sudo \
-    unzip \
-    zlib1g \
+## Installing Dependencies for Ubuntu 20.04:
+# For MATLAB : Get base-dependencies.txt from matlab-deps repository on GitHub
+# For MATLAB Integration for Jupyter : xvfb
+
+# List of MATLAB Dependencies for Ubuntu 20.04 and specified MATLAB_RELEASE
+ARG MATLAB_DEPS_REQUIREMENTS_FILE="https://raw.githubusercontent.com/mathworks-ref-arch/container-images/master/matlab-deps/${MATLAB_RELEASE}/ubuntu20.04/base-requirements.txt"
+
+# Install dependencies
+RUN export DEBIAN_FRONTEND=noninteractive && apt-get update \
+    && apt-get install --no-install-recommends -y `wget -qO- ${MATLAB_DEPS_REQUIREMENTS_FILE}`\
+    xvfb \
     && apt-get clean \
     && apt-get -y autoremove \
     && rm -rf /var/lib/apt/lists/*
 
-# Install jupyter-matlab-proxy dependencies
-RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install --yes \
-    xvfb \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# Install patched glibc - See https://github.com/mathworks/build-glibc-bz-19329-patch
+WORKDIR /packages
+RUN export DEBIAN_FRONTEND=noninteractive &&\
+    wget -q https://github.com/mathworks/build-glibc-bz-19329-patch/releases/download/ubuntu-focal/all-packages.tar.gz &&\
+    tar -x -f all-packages.tar.gz \
+    --exclude glibc-*.deb \
+    --exclude libc6-dbg*.deb &&\
+    apt-get install --yes --no-install-recommends ./*.deb &&\
+    rm -fr /packages
+WORKDIR /
 
 # Switch back to notebook user
 USER $NB_USER
@@ -90,5 +78,7 @@ RUN python -m pip install jupyter-matlab-proxy
 # Ensure jupyter-server-proxy JupyterLab extension is installed
 RUN jupyter labextension install @jupyterlab/server-proxy
 
-# Uncomment and set the port and hostname to configure a network license manager for all users
-# ENV MLM_LICENSE_FILE port@hostname
+# Make JupyterLab the default environment
+ENV JUPYTER_ENABLE_LAB="yes"
+
+ENV MW_CONTEXT_TAGS=${MW_CONTEXT_TAGS}

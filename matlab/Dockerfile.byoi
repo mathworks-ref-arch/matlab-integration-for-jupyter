@@ -1,20 +1,22 @@
 # Copyright 2021-2022 The MathWorks, Inc.
 # Builds Docker image with 
-# 1. MATLAB - Using MPM
+# 1. MATLAB - Your existing image with MATLAB
 # 2. MATLAB Integration for Jupyter
 # on a base image of jupyter/base-notebook.
 
 ## Sample Build Command:
 # docker build --build-arg MATLAB_RELEASE=r2021b \
-#              --build-arg MATLAB_PRODUCT_LIST="MATLAB Deep_Learning_Toolbox Symbolic_Math_Toolbox"\
+#              --build-arg MATLAB_IMAGE_NAME=mathworks/matlab \
 #              --build-arg LICENSE_SERVER=12345@hostname.com \
-#              -t my_matlab_image_name .
+#              -t my_matlab_image_name -f Dockerfile.byoi .
 
 # Specify release of MATLAB to build. (use lowercase, default is r2021b)
 ARG MATLAB_RELEASE=r2021b
 
-# Specify the list of products to install into MATLAB, 
-ARG MATLAB_PRODUCT_LIST="MATLAB"
+ARG DEFAULT_IMAGE_FROM_DOCKERHUB=mathworks/matlab:${MATLAB_RELEASE}
+
+# Specify name of Docker Image with MATLAB already installed.
+ARG MATLAB_IMAGE_NAME=${DEFAULT_IMAGE_FROM_DOCKERHUB}
 
 # Optional Network License Server information
 ARG LICENSE_SERVER
@@ -22,8 +24,29 @@ ARG LICENSE_SERVER
 # If LICENSE_SERVER is provided then SHOULD_USE_LICENSE_SERVER will be set to "_use_lm"
 ARG SHOULD_USE_LICENSE_SERVER=${LICENSE_SERVER:+"_with_lm"}
 
-# Default DDUX information
-ARG MW_CONTEXT_TAGS=MATLAB_PROXY:JUPYTER:MPM:V1
+# Default DDUX information, BYOI = Bring your own MATLAB Image
+ARG MW_CONTEXT_TAGS=MATLAB_PROXY:JUPYTER:BYOI:V1
+
+# Argument shared across multi-stage build to hold location of installed MATLAB 
+ARG BASE_ML_INSTALL_LOC=/tmp/matlab-install-location
+
+# Locating MATLAB in the provided image.
+# MATLAB should be available on the path in the Docker image
+FROM ${MATLAB_IMAGE_NAME} AS matlab-install-stage
+ARG BASE_ML_INSTALL_LOC
+
+# Run code to locate a MATLAB install in the base image and softlink
+# to BASE_ML_INSTALL_LOC for a latter stage to copy 
+RUN export ML_INSTALL_LOC=$(which matlab) \
+    && if [ ! -z "$ML_INSTALL_LOC" ]; then \
+    ML_INSTALL_LOC=$(dirname $(dirname $(readlink -f ${ML_INSTALL_LOC}))); \
+    echo "soft linking: " $ML_INSTALL_LOC " to" ${BASE_ML_INSTALL_LOC}; \
+    ln -s ${ML_INSTALL_LOC} ${BASE_ML_INSTALL_LOC}; \
+    elif [ $BASE_ML_INSTALL_LOC = '/tmp/matlab-install-location' ]; then \
+    echo "MATLAB was not found in your image."; exit 1; \
+    else \
+    echo "Proceeding with user provided path to MATLAB installation: ${BASE_ML_INSTALL_LOC}"; \
+    fi
 
 # Base Jupyter image without LICENSE_SERVER
 FROM jupyter/base-notebook AS base_jupyter_image
@@ -38,15 +61,20 @@ ENV MLM_LICENSE_FILE=${LICENSE_SERVER}
 FROM base_jupyter_image${SHOULD_USE_LICENSE_SERVER}
 ARG MW_CONTEXT_TAGS
 ARG MATLAB_RELEASE
-ARG MATLAB_PRODUCT_LIST
+ARG BASE_ML_INSTALL_LOC
 
 # Switch to root user
 USER root
 ENV DEBIAN_FRONTEND="noninteractive" TZ="Etc/UTC"
 
+# Copy MATLAB install from supplied Docker image
+COPY --from=matlab-install-stage ${BASE_ML_INSTALL_LOC} /usr/local/MATLAB
+
+# Put MATLAB on the PATH
+RUN ln -s /usr/local/MATLAB/bin/matlab /usr/local/bin/matlab
+
 ## Installing Dependencies for Ubuntu 20.04
 # For MATLAB : Get base-dependencies.txt from matlab-deps repository on GitHub
-# For mpm : wget, unzip, ca-certificates
 # For MATLAB Integration for Jupyter : xvfb
 
 # List of MATLAB Dependencies for Ubuntu 20.04 and specified MATLAB_RELEASE
@@ -62,16 +90,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get update \
     && apt-get clean \
     && apt-get -y autoremove \
     && rm -rf /var/lib/apt/lists/*
-
-# Run mpm to install MATLAB in the target location and delete the mpm installation afterwards
-RUN wget -q https://www.mathworks.com/mpm/glnxa64/mpm && \ 
-    chmod +x mpm && \
-    ./mpm install \
-    --release=${MATLAB_RELEASE} \
-    --destination=/opt/matlab \
-    --products ${MATLAB_PRODUCT_LIST} && \
-    rm -f mpm /tmp/mathworks_root.log && \
-    ln -s /opt/matlab/bin/matlab /usr/local/bin/matlab
 
 # Install patched glibc - See https://github.com/mathworks/build-glibc-bz-19329-patch
 WORKDIR /packages
