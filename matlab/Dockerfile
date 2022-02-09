@@ -84,8 +84,18 @@ RUN export DEBIAN_FRONTEND=noninteractive &&\
     rm -fr /packages
 WORKDIR /
 
+# Installing MATLAB Engine for Python
+RUN export DEBIAN_FRONTEND=noninteractive && apt-get update \
+    && apt-get install --no-install-recommends -y  python3-distutils \
+    && apt-get clean \
+    && apt-get -y autoremove \
+    && rm -rf /var/lib/apt/lists/* \
+    && cd /opt/matlab/extern/engines/python \
+    && python setup.py install
+
 # Switch back to notebook user
 USER $NB_USER
+WORKDIR /home/${NB_USER}
 
 # Install integration
 RUN python -m pip install jupyter-matlab-proxy

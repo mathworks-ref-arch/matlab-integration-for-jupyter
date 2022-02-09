@@ -68,10 +68,11 @@ USER root
 ENV DEBIAN_FRONTEND="noninteractive" TZ="Etc/UTC"
 
 # Copy MATLAB install from supplied Docker image
-COPY --from=matlab-install-stage ${BASE_ML_INSTALL_LOC} /usr/local/MATLAB
+ARG MATLAB_INSTALL_LOCATION="/opt/matlab"
+COPY --from=matlab-install-stage ${BASE_ML_INSTALL_LOC} ${MATLAB_INSTALL_LOCATION}
 
 # Put MATLAB on the PATH
-RUN ln -s /usr/local/MATLAB/bin/matlab /usr/local/bin/matlab
+RUN ln -s ${MATLAB_INSTALL_LOCATION}/bin/matlab /usr/local/bin/matlab
 
 ## Installing Dependencies for Ubuntu 20.04
 # For MATLAB : Get base-dependencies.txt from matlab-deps repository on GitHub
@@ -102,8 +103,18 @@ RUN export DEBIAN_FRONTEND=noninteractive &&\
     rm -fr /packages
 WORKDIR /
 
+# Installing MATLAB Engine for Python
+RUN export DEBIAN_FRONTEND=noninteractive && apt-get update \
+    && apt-get install --no-install-recommends -y  python3-distutils \
+    && apt-get clean \
+    && apt-get -y autoremove \
+    && rm -rf /var/lib/apt/lists/* \
+    && cd ${MATLAB_INSTALL_LOCATION}/extern/engines/python \
+    && python setup.py install
+
 # Switch back to notebook user
 USER $NB_USER
+WORKDIR /home/${NB_USER}
 
 # Install integration
 RUN python -m pip install jupyter-matlab-proxy

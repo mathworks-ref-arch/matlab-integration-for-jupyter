@@ -71,6 +71,7 @@ WORKDIR /
 
 # Switch back to notebook user
 USER $NB_USER
+WORKDIR /home/${NB_USER}
 
 # Install integration
 RUN python -m pip install jupyter-matlab-proxy
