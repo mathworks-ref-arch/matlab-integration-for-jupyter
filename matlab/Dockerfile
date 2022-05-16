@@ -5,13 +5,13 @@
 # on a base image of jupyter/base-notebook.
 
 ## Sample Build Command:
-# docker build --build-arg MATLAB_RELEASE=r2021b \
+# docker build --build-arg MATLAB_RELEASE=r2022a \
 #              --build-arg MATLAB_PRODUCT_LIST="MATLAB Deep_Learning_Toolbox Symbolic_Math_Toolbox"\
 #              --build-arg LICENSE_SERVER=12345@hostname.com \
 #              -t my_matlab_image_name .
 
-# Specify release of MATLAB to build. (use lowercase, default is r2021b)
-ARG MATLAB_RELEASE=r2021b
+# Specify release of MATLAB to build. (use lowercase, default is r2022a)
+ARG MATLAB_RELEASE=r2022a
 
 # Specify the list of products to install into MATLAB, 
 ARG MATLAB_PRODUCT_LIST="MATLAB"
@@ -80,7 +80,7 @@ RUN export DEBIAN_FRONTEND=noninteractive &&\
     tar -x -f all-packages.tar.gz \
     --exclude glibc-*.deb \
     --exclude libc6-dbg*.deb &&\
-    apt-get install --yes --no-install-recommends ./*.deb &&\
+    apt-get install --yes --no-install-recommends --allow-downgrades ./*.deb &&\
     rm -fr /packages
 WORKDIR /
 

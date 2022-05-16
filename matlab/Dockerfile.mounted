@@ -5,13 +5,13 @@
 # Folder with the MATLAB installation needs to be mounted into the image at /opt/matlab
 
 ## Sample Build Command:
-# docker build --build-arg MATLAB_RELEASE=r2021b \
+# docker build --build-arg MATLAB_RELEASE=r2022a \
 #              --build-arg LICENSE_SERVER=12345@hostname.com \
 #              -t my_matlab_image_name .
 
-# Specify release of MATLAB being mounted. (use lowercase, default is r2021b)
+# Specify release of MATLAB being mounted. (use lowercase, default is r2022a)
 # Used to fetch & install MATLAB's s/w dependencies
-ARG MATLAB_RELEASE=r2021b
+ARG MATLAB_RELEASE=r2022a
 
 # Optional Network License Server information in the form of port@hostname
 ARG LICENSE_SERVER
@@ -65,7 +65,7 @@ RUN export DEBIAN_FRONTEND=noninteractive &&\
     tar -x -f all-packages.tar.gz \
     --exclude glibc-*.deb \
     --exclude libc6-dbg*.deb &&\
-    apt-get install --yes --no-install-recommends ./*.deb &&\
+    apt-get install --yes --no-install-recommends --allow-downgrades ./*.deb &&\
     rm -fr /packages
 WORKDIR /
 
