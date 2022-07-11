@@ -80,10 +80,12 @@ RUN ln -s ${MATLAB_INSTALL_LOCATION}/bin/matlab /usr/local/bin/matlab
 
 # List of MATLAB Dependencies for Ubuntu 20.04 and specified MATLAB_RELEASE
 ARG MATLAB_DEPS_REQUIREMENTS_FILE="https://raw.githubusercontent.com/mathworks-ref-arch/container-images/main/matlab-deps/${MATLAB_RELEASE}/ubuntu20.04/base-dependencies.txt"
+ARG MATLAB_DEPS_REQUIREMENTS_FILE_NAME="matlab-deps-${MATLAB_RELEASE}-base-dependencies.txt"
 
 # Install dependencies
-RUN export DEBIAN_FRONTEND=noninteractive && apt-get update \
-    && apt-get install --no-install-recommends -y `wget -qO- ${MATLAB_DEPS_REQUIREMENTS_FILE}`\
+RUN wget ${MATLAB_DEPS_REQUIREMENTS_FILE} -O ${MATLAB_DEPS_REQUIREMENTS_FILE_NAME} && \
+    export DEBIAN_FRONTEND=noninteractive && apt-get update && \
+    xargs -a ${MATLAB_DEPS_REQUIREMENTS_FILE_NAME} -r apt-get install --no-install-recommends -y \
     wget \
     unzip \
     ca-certificates \
@@ -94,23 +96,25 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get update \
 
 # Install patched glibc - See https://github.com/mathworks/build-glibc-bz-19329-patch
 WORKDIR /packages
-RUN export DEBIAN_FRONTEND=noninteractive &&\
-    wget -q https://github.com/mathworks/build-glibc-bz-19329-patch/releases/download/ubuntu-focal/all-packages.tar.gz &&\
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get update && apt-get clean && apt-get autoremove && \
+    wget -q https://github.com/mathworks/build-glibc-bz-19329-patch/releases/download/ubuntu-focal/all-packages.tar.gz && \
     tar -x -f all-packages.tar.gz \
     --exclude glibc-*.deb \
-    --exclude libc6-dbg*.deb &&\
-    apt-get install --yes --no-install-recommends --allow-downgrades ./*.deb &&\
+    --exclude libc6-dbg*.deb && \
+    apt-get install --yes --no-install-recommends --allow-downgrades ./*.deb && \
     rm -fr /packages
 WORKDIR /
 
-# Installing MATLAB Engine for Python
+# Optional: Install MATLAB Engine for Python, if possible. 
+# Note: Failure to install does not stop the build.
 RUN export DEBIAN_FRONTEND=noninteractive && apt-get update \
     && apt-get install --no-install-recommends -y  python3-distutils \
     && apt-get clean \
     && apt-get -y autoremove \
     && rm -rf /var/lib/apt/lists/* \
     && cd ${MATLAB_INSTALL_LOCATION}/extern/engines/python \
-    && python setup.py install
+    && python setup.py install || true
 
 # Switch back to notebook user
 USER $NB_USER

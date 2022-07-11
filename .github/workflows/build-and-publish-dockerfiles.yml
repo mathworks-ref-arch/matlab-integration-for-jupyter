@@ -1,0 +1,63 @@
+# Build & Publish all Dockerfiles in the repository, for pre-defined set of MATLAB version.
+name: Build MIFJ Dockerfiles
+
+# Define when builds will occur:
+on:
+  # Run workflow when there is a push to the 'main' branch & push includes changes to any Dockerfile or YML files
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '**Dockerfile*'
+      - '**.yml'
+  
+  # Run workflow when there is a release
+  release:
+    types:
+      - 'created'
+
+  # Run at 00:00 on every Monday (1st Day of the Week) (See: crontab.guru)
+  schedule:
+    - cron: '0 0 * * 1'
+
+jobs:
+  docker:
+    # Each job needs a runner environment
+    runs-on: ubuntu-latest
+    continue-on-error: True
+    strategy:
+      matrix:
+        matlab_release: [r2022a, r2021b, r2021a, r2020b]
+        dockerfile: ["./matlab/Dockerfile", "./matlab/Dockerfile.byoi", "./matlab/Dockerfile.mounted", "./matlab-vnc/Dockerfile", "./matlab-vnc/Dockerfile.mounted"]
+        include:
+        - image: "jupyter-matlab-notebook"
+          dockerfile: "./matlab/Dockerfile"
+          context: "./matlab"
+
+        - image: "jupyter-byoi-matlab-notebook"
+          dockerfile: "./matlab/Dockerfile.byoi"
+          context: "./matlab"
+
+        - image: "jupyter-mounted-matlab-notebook"
+          dockerfile: "./matlab/Dockerfile.mounted"
+          context: "./matlab"
+
+        - image: "jupyter-matlab-vnc-notebook"
+          dockerfile: "./matlab-vnc/Dockerfile"
+          context: "./matlab-vnc"
+
+        - image: "jupyter-mounted-matlab-vnc-notebook"
+          dockerfile: "./matlab-vnc/Dockerfile.mounted"
+          context: "./matlab-vnc"
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/build-and-push-notebook
+        with:
+          dockerfile: ${{ matrix.dockerfile }}
+          context: ${{ matrix.context }}
+          matlab_release: ${{ matrix.matlab_release }}
+          image: ${{ matrix.image }}
+          registry: ghcr.io
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_repo: ${{ github.repository }}
