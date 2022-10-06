@@ -5,13 +5,13 @@
 # Folder with the MATLAB installation needs to be mounted into the image at /opt/matlab
 
 ## Sample Build Command:
-# docker build --build-arg MATLAB_RELEASE=r2022a \
+# docker build --build-arg MATLAB_RELEASE=r2022b \
 #              --build-arg LICENSE_SERVER=12345@hostname.com \
 #              -t my_matlab_image_name .
 
-# Specify release of MATLAB being mounted. (use lowercase, default is r2022a)
+# Specify release of MATLAB being mounted. (use lowercase, default is r2022b)
 # Used to fetch & install MATLAB's s/w dependencies
-ARG MATLAB_RELEASE=r2022a
+ARG MATLAB_RELEASE=r2022b
 
 # Optional Network License Server information in the form of port@hostname
 ARG LICENSE_SERVER
@@ -23,10 +23,10 @@ ARG SHOULD_USE_LICENSE_SERVER=${LICENSE_SERVER:+"_with_lm"}
 ARG MW_CONTEXT_TAGS=MATLAB_PROXY:JUPYTER:MOUNTED:V1
 
 # Base Jupyter image without LICENSE_SERVER
-FROM jupyter/base-notebook AS base_image
+FROM jupyter/base-notebook:ubuntu-20.04 AS base_image
 
 # Base Jupyter image with LICENSE_SERVER
-FROM jupyter/base-notebook AS base_image_with_lm
+FROM jupyter/base-notebook:ubuntu-20.04 AS base_image_with_lm
 ARG LICENSE_SERVER
 # If license server information is available, then use it to set environment variable
 ENV MLM_LICENSE_FILE=${LICENSE_SERVER}

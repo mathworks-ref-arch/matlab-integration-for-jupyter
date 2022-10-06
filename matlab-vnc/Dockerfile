@@ -5,13 +5,13 @@
 # on a base image of jupyter/base-notebook.
 
 ## Sample Build Command:
-# docker build --build-arg MATLAB_RELEASE=r2022a \
+# docker build --build-arg MATLAB_RELEASE=r2022b \
 #              --build-arg MATLAB_PRODUCT_LIST="MATLAB Deep_Learning_Toolbox Symbolic_Math_Toolbox"\
 #              --build-arg LICENSE_SERVER=12345@hostname.com \
 #              -t my_matlab_image_name .
 
-# Specify release of MATLAB to build. (use lowercase, default is r2022a)
-ARG MATLAB_RELEASE=r2022a
+# Specify release of MATLAB to build. (use lowercase, default is r2022b)
+ARG MATLAB_RELEASE=r2022b
 
 # Specify the list of products to install into MATLAB, 
 ARG MATLAB_PRODUCT_LIST="MATLAB"
@@ -25,11 +25,11 @@ ARG SHOULD_USE_LICENSE_SERVER=${LICENSE_SERVER:+"_with_lm"}
 # Default DDUX information
 ARG MW_CONTEXT_TAGS=MATLAB_PROXY:JUPYTER:MPM:V1
 
-# Base Jupyter image without LICENSE_SERVER, using python-3.9.12 as websockify only supports upto 3.9
-FROM jupyter/base-notebook:python-3.9.12 AS base_jupyter_image
+# Base Jupyter image without LICENSE_SERVER
+FROM jupyter/base-notebook:ubuntu-20.04 AS base_jupyter_image
 
 # Base Jupyter image with LICENSE_SERVER
-FROM jupyter/base-notebook:python-3.9.12 AS base_jupyter_image_with_lm
+FROM jupyter/base-notebook:ubuntu-20.04 AS base_jupyter_image_with_lm
 ARG LICENSE_SERVER
 # If license server information is available, then use it to set environment variable
 ENV MLM_LICENSE_FILE=${LICENSE_SERVER}
@@ -70,7 +70,7 @@ RUN wget ${MATLAB_DEPS_REQUIREMENTS_FILE} -O ${MATLAB_DEPS_REQUIREMENTS_FILE_NAM
     && apt-get remove -y gnome-screensaver  \
     && apt-get clean \
     && apt-get -y autoremove \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* ${MATLAB_DEPS_REQUIREMENTS_FILE_NAME}
 
 # Run mpm to install MATLAB in the target location and delete the mpm installation afterwards
 RUN wget -q https://www.mathworks.com/mpm/glnxa64/mpm && \ 
@@ -117,7 +117,7 @@ RUN passwd $NB_USER -d
 USER $NB_USER
 
 # Get websockify
-RUN conda install -y -q websockify=0.9.0
+RUN conda install -y -q websockify=0.10.0
 
 # Set environment variable for python package jupyter-matlab-vnc-proxy
 ENV NOVNC_PATH=${NOVNC_PATH}

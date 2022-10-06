@@ -5,13 +5,13 @@
 # on a base image of jupyter/base-notebook.
 
 ## Sample Build Command:
-# docker build --build-arg MATLAB_RELEASE=r2022a \
+# docker build --build-arg MATLAB_RELEASE=r2022b \
 #              --build-arg MATLAB_IMAGE_NAME=mathworks/matlab \
 #              --build-arg LICENSE_SERVER=12345@hostname.com \
 #              -t my_matlab_image_name -f Dockerfile.byoi .
 
-# Specify release of MATLAB to build. (use lowercase, default is r2022a)
-ARG MATLAB_RELEASE=r2022a
+# Specify release of MATLAB to build. (use lowercase, default is r2022b)
+ARG MATLAB_RELEASE=r2022b
 
 ARG DEFAULT_IMAGE_FROM_DOCKERHUB=mathworks/matlab:${MATLAB_RELEASE}
 
@@ -49,10 +49,10 @@ RUN export ML_INSTALL_LOC=$(which matlab) \
     fi
 
 # Base Jupyter image without LICENSE_SERVER
-FROM jupyter/base-notebook AS base_jupyter_image
+FROM jupyter/base-notebook:ubuntu-20.04 AS base_jupyter_image
 
 # Base Jupyter image with LICENSE_SERVER
-FROM jupyter/base-notebook AS base_jupyter_image_with_lm
+FROM jupyter/base-notebook:ubuntu-20.04 AS base_jupyter_image_with_lm
 ARG LICENSE_SERVER
 # If license server information is available, then use it to set environment variable
 ENV MLM_LICENSE_FILE=${LICENSE_SERVER}
@@ -83,16 +83,16 @@ ARG MATLAB_DEPS_REQUIREMENTS_FILE="https://raw.githubusercontent.com/mathworks-r
 ARG MATLAB_DEPS_REQUIREMENTS_FILE_NAME="matlab-deps-${MATLAB_RELEASE}-base-dependencies.txt"
 
 # Install dependencies
-RUN wget ${MATLAB_DEPS_REQUIREMENTS_FILE} -O ${MATLAB_DEPS_REQUIREMENTS_FILE_NAME} && \
-    export DEBIAN_FRONTEND=noninteractive && apt-get update && \
-    xargs -a ${MATLAB_DEPS_REQUIREMENTS_FILE_NAME} -r apt-get install --no-install-recommends -y \
+RUN wget ${MATLAB_DEPS_REQUIREMENTS_FILE} -O ${MATLAB_DEPS_REQUIREMENTS_FILE_NAME} \
+    && export DEBIAN_FRONTEND=noninteractive && apt-get update \
+    && xargs -a ${MATLAB_DEPS_REQUIREMENTS_FILE_NAME} -r apt-get install --no-install-recommends -y \
     wget \
     unzip \
     ca-certificates \
     xvfb \
     && apt-get clean \
     && apt-get -y autoremove \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* ${MATLAB_DEPS_REQUIREMENTS_FILE_NAME}
 
 # Install patched glibc - See https://github.com/mathworks/build-glibc-bz-19329-patch
 WORKDIR /packages

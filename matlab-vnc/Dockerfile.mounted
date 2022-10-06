@@ -5,13 +5,13 @@
 # Folder with the MATLAB installation needs to be mounted into the image at /opt/matlab
 
 ## Sample Build Command:
-# docker build --build-arg MATLAB_RELEASE=r2022a \
+# docker build --build-arg MATLAB_RELEASE=r2022b \
 #              --build-arg LICENSE_SERVER=12345@hostname.com \
 #              -t my_matlab_image_name .
 
-# Specify release of MATLAB being mounted. (use lowercase, default is r2022a)
+# Specify release of MATLAB being mounted. (use lowercase, default is r2022b)
 # Used to fetch & install MATLAB's s/w dependencies
-ARG MATLAB_RELEASE=r2022a
+ARG MATLAB_RELEASE=r2022b
 
 # Optional Network License Server information in the form of port@hostname
 ARG LICENSE_SERVER
@@ -22,11 +22,11 @@ ARG SHOULD_USE_LICENSE_SERVER=${LICENSE_SERVER:+"_with_lm"}
 # Default DDUX information
 ARG MW_CONTEXT_TAGS=MATLAB_PROXY:JUPYTER:MOUNTED:V1
 
-# Base Jupyter image without LICENSE_SERVER, using python-3.9.12 as websockify only supports upto 3.9
-FROM jupyter/base-notebook:python-3.9.12 AS base_image
+# Base Jupyter image without LICENSE_SERVER
+FROM jupyter/base-notebook:ubuntu-20.04 AS base_image
 
 # Base Jupyter image with LICENSE_SERVER
-FROM jupyter/base-notebook:python-3.9.12 AS base_image_with_lm
+FROM jupyter/base-notebook:ubuntu-20.04 AS base_image_with_lm
 ARG LICENSE_SERVER
 # If license server information is available, then use it to set environment variable
 ENV MLM_LICENSE_FILE=${LICENSE_SERVER}
@@ -68,7 +68,7 @@ RUN wget ${MATLAB_DEPS_REQUIREMENTS_FILE} -O ${MATLAB_DEPS_REQUIREMENTS_FILE_NAM
     && apt-get remove -y gnome-screensaver  \
     && apt-get clean \
     && apt-get -y autoremove \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* ${MATLAB_DEPS_REQUIREMENTS_FILE_NAME}
 
 # Install patched glibc - See https://github.com/mathworks/build-glibc-bz-19329-patch
 WORKDIR /packages
@@ -105,7 +105,7 @@ RUN passwd $NB_USER -d
 USER $NB_USER
 
 # Get websockify
-RUN conda install -y -q websockify=0.9.0
+RUN conda install -y -q websockify=0.10.0
 
 # Set environment variable for python package jupyter-matlab-vnc-proxy
 ENV NOVNC_PATH=${NOVNC_PATH}

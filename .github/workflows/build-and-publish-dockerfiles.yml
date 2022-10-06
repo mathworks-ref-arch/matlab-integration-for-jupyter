@@ -24,15 +24,21 @@ jobs:
   docker:
     # Each job needs a runner environment
     runs-on: ubuntu-latest
-    continue-on-error: True
     strategy:
+      fail-fast: false
       matrix:
-        matlab_release: [r2022a, r2021b, r2021a, r2020b]
+        matlab_release: [r2022b, r2022a, r2021b, r2021a, r2020b]
         dockerfile: ["./matlab/Dockerfile", "./matlab/Dockerfile.byoi", "./matlab/Dockerfile.mounted", "./matlab-vnc/Dockerfile", "./matlab-vnc/Dockerfile.mounted"]
         include:
         - image: "jupyter-matlab-notebook"
           dockerfile: "./matlab/Dockerfile"
           context: "./matlab"
+
+        # Build ubuntu22.04 only for r2022b
+        - image: "jupyter-matlab-notebook-ubuntu-2204"
+          dockerfile: "./matlab/Dockerfile.ubuntu-22.04"
+          context: "./matlab"
+          matlab_release: "r2022b"
 
         - image: "jupyter-byoi-matlab-notebook"
           dockerfile: "./matlab/Dockerfile.byoi"
