@@ -125,8 +125,7 @@ ENV NOVNC_PATH=${NOVNC_PATH}
 # Pip install the latest version of the integration
 RUN curl -s https://api.github.com/repos/mathworks/jupyter-matlab-vnc-proxy/releases/latest | grep tarball_url | cut -d '"' -f 4 | xargs python -m pip install
 
-# Ensure jupyter-server-proxy JupyterLab extension is installed
-RUN jupyter labextension install @jupyterlab/server-proxy
+
 
 # Move MATLAB resource files to the expected locations
 RUN export RESOURCES_LOC=$(python -c "import jupyter_matlab_vnc_proxy as pkg; print(pkg.__path__[0])")/resources \

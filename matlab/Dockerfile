@@ -103,8 +103,7 @@ WORKDIR /home/${NB_USER}
 # Install integration
 RUN python -m pip install jupyter-matlab-proxy
 
-# Ensure jupyter-server-proxy JupyterLab extension is installed
-RUN jupyter labextension install @jupyterlab/server-proxy
+
 
 # Make JupyterLab the default environment
 ENV JUPYTER_ENABLE_LAB="yes"
