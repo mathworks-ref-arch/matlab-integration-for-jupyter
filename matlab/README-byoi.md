@@ -7,13 +7,13 @@ Pass the name of your existing MATLAB image to docker build using the `build-tim
 `Dockerfile.byoi` supports the following build-time variables:
 | Argument Name | Default value | Effect |
 |---|---|---|
-| **MATLAB_IMAGE_NAME** | mathworks/matlab:r2022b | Specify the name of the Docker image that MATLAB should be extracted from. |
-| [MATLAB_RELEASE](#build-an-image-for-a-different-release-of-matlab) | r2022b | The MATLAB release you are using. Used to install its software dependencies.|
+| **MATLAB_IMAGE_NAME** | mathworks/matlab:r2023a | Specify the name of the Docker image that MATLAB should be extracted from. |
+| [MATLAB_RELEASE](#build-an-image-for-a-different-release-of-matlab) | r2023a | The MATLAB release you are using. Used to install its software dependencies.|
 | [LICENSE_SERVER](#build-an-image-with-license-server-information) | *unset* | The port and hostname of the machine that is running the Network License Manager, using the `port@hostname` syntax. For Example: `27000@MyServerName`. </br> Click [Using the Network License Manager](https://github.com/mathworks-ref-arch/matlab-dockerfile#use-the-network-license-manager) to learn more.|
 
 To build the Docker image, follow these steps:
 ```bash
-docker build --build-arg MATLAB_RELEASE=r2022b \
+docker build --build-arg MATLAB_RELEASE=r2023a \
               --build-arg MATLAB_IMAGE_NAME=mathworks/matlab \
               --build-arg LICENSE_SERVER=12345@hostname.com \
               -t maltab-notebook -f Dockerfile.byoi .

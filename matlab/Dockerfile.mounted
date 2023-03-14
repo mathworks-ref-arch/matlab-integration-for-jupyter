@@ -1,17 +1,17 @@
-# Copyright 2021-2022 The MathWorks, Inc.
+# Copyright 2021-2023 The MathWorks, Inc.
 # Builds Docker image with 
 # 1. MATLAB Integration for Jupyter
 # on a base image of jupyter/base-notebook.
 # Folder with the MATLAB installation needs to be mounted into the image at /opt/matlab
 
 ## Sample Build Command:
-# docker build --build-arg MATLAB_RELEASE=r2022b \
+# docker build --build-arg MATLAB_RELEASE=r2023a \
 #              --build-arg LICENSE_SERVER=12345@hostname.com \
 #              -t my_matlab_image_name .
 
-# Specify release of MATLAB being mounted. (use lowercase, default is r2022b)
+# Specify release of MATLAB being mounted. (use lowercase, default is r2023a)
 # Used to fetch & install MATLAB's s/w dependencies
-ARG MATLAB_RELEASE=r2022b
+ARG MATLAB_RELEASE=r2023a
 
 # Optional Network License Server information in the form of port@hostname
 ARG LICENSE_SERVER

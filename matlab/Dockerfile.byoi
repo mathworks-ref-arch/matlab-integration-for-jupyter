@@ -1,17 +1,17 @@
-# Copyright 2021-2022 The MathWorks, Inc.
+# Copyright 2021-2023 The MathWorks, Inc.
 # Builds Docker image with 
 # 1. MATLAB - Your existing image with MATLAB
 # 2. MATLAB Integration for Jupyter
 # on a base image of jupyter/base-notebook.
 
 ## Sample Build Command:
-# docker build --build-arg MATLAB_RELEASE=r2022b \
+# docker build --build-arg MATLAB_RELEASE=r2023a \
 #              --build-arg MATLAB_IMAGE_NAME=mathworks/matlab \
 #              --build-arg LICENSE_SERVER=12345@hostname.com \
 #              -t my_matlab_image_name -f Dockerfile.byoi .
 
-# Specify release of MATLAB to build. (use lowercase, default is r2022b)
-ARG MATLAB_RELEASE=r2022b
+# Specify release of MATLAB to build. (use lowercase, default is r2023a)
+ARG MATLAB_RELEASE=r2023a
 
 ARG DEFAULT_IMAGE_FROM_DOCKERHUB=mathworks/matlab:${MATLAB_RELEASE}
 

@@ -1,17 +1,17 @@
-# Copyright 2021-2022 The MathWorks, Inc.
+# Copyright 2021-2023 The MathWorks, Inc.
 # Builds Docker image with 
 # 1. MATLAB - Using MPM
 # 2. MATLAB Integration for Jupyter (VNC)
 # on a base image of jupyter/base-notebook.
 
 ## Sample Build Command:
-# docker build --build-arg MATLAB_RELEASE=r2022b \
+# docker build --build-arg MATLAB_RELEASE=r2023a \
 #              --build-arg MATLAB_PRODUCT_LIST="MATLAB Deep_Learning_Toolbox Symbolic_Math_Toolbox"\
 #              --build-arg LICENSE_SERVER=12345@hostname.com \
 #              -t my_matlab_image_name .
 
-# Specify release of MATLAB to build. (use lowercase, default is r2022b)
-ARG MATLAB_RELEASE=r2022b
+# Specify release of MATLAB to build. (use lowercase, default is r2023a)
+ARG MATLAB_RELEASE=r2023a
 
 # Specify the list of products to install into MATLAB, 
 ARG MATLAB_PRODUCT_LIST="MATLAB"

@@ -41,7 +41,7 @@ The [Dockerfile](https://github.com/mathworks-ref-arch/matlab-integration-for-ju
 | Argument Name | Default value | Effect |
 |---|---|---|
 | [MATLAB_PRODUCT_LIST](#customize-products-to-install) | MATLAB | Specify the list of products to install using product names separated by spaces. Replace spaces within names with underscores. For example: `MATLAB Simulink Deep_Learning_Toolbox Parallel_Computing_Toolbox` </br> See [MPM Documentation](https://github.com/mathworks-ref-arch/matlab-dockerfile/blob/main/MPM.md) for more information.|
-| [MATLAB_RELEASE](#build-an-image-for-a-different-release-of-matlab) | r2022b | The MATLAB release you want to install. **MUST** be newer than `r2020b` and specified in lower-case|
+| [MATLAB_RELEASE](#build-an-image-for-a-different-release-of-matlab) | r2023a | The MATLAB release you want to install. **MUST** be newer than `r2020b` and specified in lower-case|
 | [LICENSE_SERVER](#build-an-image-with-license-server-information) | *unset* | The port and hostname of the machine that is running the Network License Manager, using the `port@hostname` syntax. For Example: `27000@MyServerName`. </br> Click [Using the Network License Manager](https://github.com/mathworks-ref-arch/matlab-dockerfile#use-the-network-license-manager) to learn more.|
 
 ### Customize Products to Install
