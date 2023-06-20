@@ -61,6 +61,7 @@ RUN echo ${MATLAB_DEPS_REQUIREMENTS} > ${MATLAB_DEPS_REQUIREMENTS_FILE_NAME} \
     unzip \
     ca-certificates \
     xvfb \
+    git \
     && apt-get clean \
     && apt-get -y autoremove \
     && rm -rf /var/lib/apt/lists/* ${MATLAB_DEPS_REQUIREMENTS_FILE_NAME}
