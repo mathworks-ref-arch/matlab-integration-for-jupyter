@@ -1,0 +1,33 @@
+# Copyright 2023 The MathWorks, Inc.
+# Build & Publish matlab-vnc/ubuntu20.04/Dockerfile
+name: matlab-vnc/ubuntu20.04/Dockerfile
+
+# Define when builds will occur:
+on:
+  # Run workflow when there is a push to the 'main' branch & push includes changes to any files in described path
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'matlab-vnc/ubuntu20.04/Dockerfile'
+
+  # Run at 00:00 on every Monday (1st Day of the Week) (See: crontab.guru)
+  schedule:
+    - cron: '0 0 * * 1'
+
+  workflow_dispatch:
+
+jobs:
+  build-and-publish-docker-image:
+    strategy:
+      fail-fast: false
+      matrix:
+        matlab_release_tag: [r2023b, r2023a, r2022b, r2022a, r2021b, r2021a, r2020b]
+    uses: ./.github/workflows/build-and-publish-docker-image.yml
+    secrets: inherit
+    with:
+        docker_build_context: './matlab-vnc/ubuntu20.04'
+        base_image_name: ghcr.io/${{ github.repository }}/jupyter-matlab-vnc-notebook
+        os_info_tag: 'ubuntu20.04'
+        matlab_release_tag: ${{ matrix.matlab_release_tag }}
+        is_default_os: false
