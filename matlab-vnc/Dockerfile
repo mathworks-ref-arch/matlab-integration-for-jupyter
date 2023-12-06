@@ -31,7 +31,7 @@ ARG MATLAB_RELEASE=r2023b
 ARG PYTHON_VERSION=3.10
 
 # Specify the list of products to install into MATLAB, 
-ARG MATLAB_PRODUCT_LIST="MATLAB"
+ARG MATLAB_PRODUCT_LIST="MATLAB Symbolic_Math_Toolbox"
 
 # Optional Network License Server information
 ARG LICENSE_SERVER
