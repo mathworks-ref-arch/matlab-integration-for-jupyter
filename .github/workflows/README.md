@@ -31,14 +31,14 @@ The matlab-integration-for-jupyter repository has the following folder structure
 
 | Name of Dockerfile | Name of Image Pushed | Tags Available |
 |----|----|----|
-|matlab/Dockerfile | jupyter-matlab-notebook | r2023b, r2023a, r2022b, r2023b-ubuntu22.04, r2023a-ubuntu22.04, r2022b-ubuntu22.04 |
-|matlab/Dockerfile.byoi | jupyter-byoi-matlab-notebook | r2023b, r2023a, r2022b, r2023b-ubuntu22.04, r2023a-ubuntu22.04, r2022b-ubuntu22.04 |
-|matlab/Dockerfile.mounted | jupyter-mounted-matlab-notebook | r2023b, r2023a, r2022b, r2023b-ubuntu22.04, r2023a-ubuntu22.04, r2022b-ubuntu22.04 |
+|matlab/Dockerfile | jupyter-matlab-notebook | r2024a, r2023b, r2023a, r2022b, r2023b-ubuntu22.04, r2023a-ubuntu22.04, r2022b-ubuntu22.04 |
+|matlab/Dockerfile.byoi | jupyter-byoi-matlab-notebook | r2024a, r2023b, r2023a, r2022b, r2023b-ubuntu22.04, r2023a-ubuntu22.04, r2022b-ubuntu22.04 |
+|matlab/Dockerfile.mounted | jupyter-mounted-matlab-notebook | r2024a, r2023b, r2023a, r2022b, r2023b-ubuntu22.04, r2023a-ubuntu22.04, r2022b-ubuntu22.04 |
 |matlab/ubuntu20.04/Dockerfile | jupyter-matlab-notebook | r2023b-ubuntu20.04, r2023a-ubuntu20.04, r2020b-ubuntu20.04, r2020a-ubuntu20.04, r2021b-ubuntu20.04, r2021a-ubuntu20.04, r2020b-ubuntu20.04 |
 |matlab/ubuntu20.04/Dockerfile.byoi | jupyter-byoi-matlab-notebook | r2023b-ubuntu20.04, r2023a-ubuntu20.04, r2020b-ubuntu20.04, r2020a-ubuntu20.04, r2021b-ubuntu20.04, r2021a-ubuntu20.04, r2020b-ubuntu20.04 |
 |matlab/ubuntu20.04/Dockerfile.mounted | jupyter-mounted-matlab-notebook |r2023b-ubuntu20.04, r2023a-ubuntu20.04, r2020b-ubuntu20.04, r2020a-ubuntu20.04, r2021b-ubuntu20.04, r2021a-ubuntu20.04, r2020b-ubuntu20.04 |
-|matlab-vnc/Dockerfile | jupyter-matlab-vnc-notebook | r2023b, r2023a, r2022b, r2023b-ubuntu22.04, r2023a-ubuntu22.04, r2022b-ubuntu22.04 |
-|matlab-vnc/Dockerfile.mounted | jupyter-mounted-matlab-vnc-notebook | r2023b, r2023a, r2022b, r2023b-ubuntu22.04, r2023a-ubuntu22.04, r2022b-ubuntu22.04 |
+|matlab-vnc/Dockerfile | jupyter-matlab-vnc-notebook | r2024a, r2023b, r2023a, r2022b, r2023b-ubuntu22.04, r2023a-ubuntu22.04, r2022b-ubuntu22.04 |
+|matlab-vnc/Dockerfile.mounted | jupyter-mounted-matlab-vnc-notebook | r2024a, r2023b, r2023a, r2022b, r2023b-ubuntu22.04, r2023a-ubuntu22.04, r2022b-ubuntu22.04 |
 |matlab-vnc/ubuntu20.04/Dockerfile | jupyter-matlab-vnc-notebook | r2023b-ubuntu20.04, r2023a-ubuntu20.04, r2020b-ubuntu20.04, r2020a-ubuntu20.04, r2021b-ubuntu20.04, r2021a-ubuntu20.04, r2020b-ubuntu20.04 |
 |matlab-vnc/ubuntu20.04/Dockerfile.mounted | jupyter-mounted-matlab-vnc-notebook | r2023b-ubuntu20.04, r2023a-ubuntu20.04, r2020b-ubuntu20.04, r2020a-ubuntu20.04, r2021b-ubuntu20.04, r2021a-ubuntu20.04, r2020b-ubuntu20.04 |
 
@@ -53,5 +53,7 @@ Each `reusable-workflow` job consists of the following steps:
 1. If the variable "should_add_latest_tag" is present that an additional "latest" tag is added to the image.
 
 ----
-Copyright 2023 The MathWorks, Inc.
+
+Copyright 2023-2024 The MathWorks, Inc.
+
 ----

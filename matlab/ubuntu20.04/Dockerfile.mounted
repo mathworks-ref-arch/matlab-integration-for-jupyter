@@ -1,11 +1,11 @@
-# Copyright 2023 The MathWorks, Inc.
+# Copyright 2023-2024 The MathWorks, Inc.
 # Builds Docker image with 
 # 1. MATLAB Integration for Jupyter
 # on a base image of jupyter/base-notebook:ubuntu-20.04
 # Folder with the MATLAB installation needs to be mounted into the image at /opt/matlab
 
 ## Sample Build Command:
-# docker build --build-arg MATLAB_RELEASE=r2023b \
+# docker build --build-arg MATLAB_RELEASE=r2024a \
 #              --build-arg LICENSE_SERVER=12345@hostname.com \
 #              -t my_matlab_image_name .
 
@@ -13,6 +13,7 @@
 # For more information, see: https://mathworks.com/support/requirements/python-compatibility.html
 # MATLAB RELEASE | Supported Python Versions | OS supported by matlab-deps|Supported by this Dockerfile |
 # ---------------|---------------------------|----------------------------|-----------------------------|
+#     R2024a     |  3.9, 3.10, 3.11          | Ubuntu 22.04 & 20.04       |  Yes                        |
 #     R2023b     |  3.9, 3.10, 3.11          | Ubuntu 22.04 & 20.04       |  Yes                        |
 #     R2023a     |  3.8, 3.9, 3.10           | Ubuntu 22.04 & 20.04       |  Yes                        |
 #     R2022b     |  3.8, 3.9, 3.10           | Ubuntu 22.04 & 20.04       |  Yes                        |
@@ -21,9 +22,9 @@
 #     R2021a     |  3.8                      | Ubuntu 20.04               |  Yes                        |
 #     R2020b     |  3.8                      | Ubuntu 20.04               |  Yes                        |
 
-# Specify release of MATLAB being mounted. (use lowercase, default is r2023b)
+# Specify release of MATLAB being mounted. (use lowercase, default is r2024a)
 # Used to fetch & install MATLAB's s/w dependencies
-ARG MATLAB_RELEASE=r2023b
+ARG MATLAB_RELEASE=r2024a
 
 # Optional Network License Server information in the form of port@hostname
 ARG LICENSE_SERVER
@@ -87,7 +88,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     rm -fr /packages
 WORKDIR /
 
-# The default Python 3.10 used in this image is only supported for MATLAB releases R2023b, R2023a, R2022b.
+# The default Python 3.10 used in this image is only supported for MATLAB releases R2024a, R2023b, R2023a, R2022b.
 # Optional: Install MATLAB Engine for Python, if possible. 
 # Note: Failure to install does not stop the build.
 RUN export DEBIAN_FRONTEND=noninteractive && apt-get update \

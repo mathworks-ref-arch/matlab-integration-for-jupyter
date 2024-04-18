@@ -44,7 +44,7 @@ The [Dockerfile](https://github.com/mathworks-ref-arch/matlab-integration-for-ju
 
 | Argument Name | Default value | Effect |
 |---|---|---|
-| [MATLAB_RELEASE](#build-an-image-for-a-different-release-of-matlab) | r2023b | The MATLAB release you want to install. **MUST** be newer than `r2020b` and specified in lower-case|
+| [MATLAB_RELEASE](#build-an-image-for-a-different-release-of-matlab) | r2024a | The MATLAB release you want to install. **MUST** be newer than `r2020b` and specified in lower-case|
 | [MATLAB_PRODUCT_LIST](#customize-products-to-install) | MATLAB | Specify the list of products to install using product names separated by spaces. Replace spaces within names with underscores. For example: `MATLAB Simulink Deep_Learning_Toolbox Parallel_Computing_Toolbox` </br> See [MPM Documentation](https://github.com/mathworks-ref-arch/matlab-dockerfile/blob/main/MPM.md) for more information.|
 | [PYTHON_VERSION](#choose-version-of-python) | 3.10 | Select version of Python used by Jupyter. See [here](https://hub.docker.com/r/jupyter/base-notebook/tags?page=1&name=python-), for list of Python tags available for use. |
 | [LICENSE_SERVER](#build-an-image-with-license-server-information) | *unset* | The port and hostname of the machine that is running the Network License Manager, using the `port@hostname` syntax. For Example: `27000@MyServerName`. </br> Click [Using the Network License Manager](https://github.com/mathworks-ref-arch/matlab-dockerfile#use-the-network-license-manager) to learn more.|
@@ -60,8 +60,8 @@ docker build --build-arg MATLAB_PRODUCT_LIST="MATLAB Symbolic_Math_Toolbox" -t m
 
 ### Build an Image for a Different Release of MATLAB
 ```bash
-# Builds an image with MATLAB R2023b
-docker build --build-arg MATLAB_RELEASE=r2023b -t matlab-notebook .
+# Builds an image with MATLAB R2024a
+docker build --build-arg MATLAB_RELEASE=r2024a -t matlab-notebook .
 ```
 
 ### Build an Image with a different version of Python.
