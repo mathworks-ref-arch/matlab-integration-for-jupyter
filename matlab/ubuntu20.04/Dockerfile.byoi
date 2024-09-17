@@ -5,7 +5,7 @@
 # on a base image of jupyter/base-notebook:ubuntu-20.04
 
 ## Sample Build Command:
-# docker build --build-arg MATLAB_RELEASE=r2024a \
+# docker build --build-arg MATLAB_RELEASE=R2024b \
 #              --build-arg MATLAB_IMAGE_NAME=mathworks/matlab \
 #              --build-arg LICENSE_SERVER=12345@hostname.com \
 #              -t my_matlab_image_name -f Dockerfile.byoi .
@@ -18,6 +18,7 @@
 # For more information, see: https://mathworks.com/support/requirements/python-compatibility.html
 # MATLAB RELEASE | Supported Python Versions | OS supported by matlab-deps|  Notes                          |
 # ---------------|---------------------------|----------------------------|---------------------------------|
+#     R2024b     |  3.9, 3.10, 3.11, 3.12    | Ubuntu 22.04 & 20.04       | Use Dockerfile for ubuntu-22.04 |
 #     R2024a     |  3.9, 3.10, 3.11          | Ubuntu 22.04 & 20.04       | Use Dockerfile for ubuntu-22.04 |
 #     R2023b     |  3.9, 3.10, 3.11          | Ubuntu 22.04 & 20.04       | Use Dockerfile for ubuntu-22.04 |
 #     R2023a     |  3.8, 3.9, 3.10           | Ubuntu 22.04 & 20.04       | Use Dockerfile for ubuntu-22.04 |
@@ -27,8 +28,8 @@
 #     R2021a     |  3.8                      | Ubuntu 20.04               | Cannot install MATLAB Engine for python |
 #     R2020b     |  3.8                      | Ubuntu 20.04               | Cannot install MATLAB Engine for python |
 
-# Specify release of MATLAB to build. (use lowercase, default is r2024a)
-ARG MATLAB_RELEASE=r2024a
+# Specify release of MATLAB to build. (Default is R2024b)
+ARG MATLAB_RELEASE=R2024b
 
 # See https://hub.docker.com/r/jupyter/base-notebook/tags to pick the appropriate tag.
 ARG BASE_NOTEBOOK_TAG=ubuntu-20.04
@@ -110,7 +111,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get update \
     ca-certificates \
     xvfb \
     git \
-    && wget ${MATLAB_DEPS_REQUIREMENTS_FILE} -O ${MATLAB_DEPS_REQUIREMENTS_FILE_NAME} \
+    && wget $(echo ${MATLAB_DEPS_REQUIREMENTS_FILE} | tr "[:upper:]" "[:lower:]") -O ${MATLAB_DEPS_REQUIREMENTS_FILE_NAME} \
     && xargs -a ${MATLAB_DEPS_REQUIREMENTS_FILE_NAME} -r apt-get install --no-install-recommends -y \
     && apt-get clean \
     && apt-get -y autoremove \

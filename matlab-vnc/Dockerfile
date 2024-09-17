@@ -5,7 +5,7 @@
 # on a base image of jupyter/base-notebook:python-3.xx
 
 ## Sample Build Command:
-# docker build --build-arg MATLAB_RELEASE=r2024a \
+# docker build --build-arg MATLAB_RELEASE=R2024b \
 #              --build-arg MATLAB_PRODUCT_LIST="MATLAB Deep_Learning_Toolbox Symbolic_Math_Toolbox"\
 #              --build-arg LICENSE_SERVER=12345@hostname.com \
 #              -t my_matlab_image_name .
@@ -15,6 +15,7 @@
 # MATLAB RELEASE | Supported Python Versions  | OS supported by matlab-deps|Supported by this Dockerfile     |
 # ---------------| (MATLAB Engine for Python) |----------------------------|---------------------------------|
 # ---------------|----------------------------|----------------------------|---------------------------------|
+#     R2024b     |  3.9, 3.10, 3.11, 3.12     | Ubuntu 20.04 & 22.04       |  Yes                            |
 #     R2024a     |  3.9, 3.10, 3.11           | Ubuntu 20.04 & 22.04       |  Yes                            |
 #     R2023b     |  3.9, 3.10, 3.11           | Ubuntu 20.04 & 22.04       |  Yes                            |
 #     R2023a     |  3.8, 3.9, 3.10            | Ubuntu 20.04 & 22.04       |  Yes                            |
@@ -24,11 +25,11 @@
 #     R2021a     |  3.8                       | Ubuntu 20.04               |  No, use ubuntu20.04/Dockerfile |
 #     R2020b     |  3.8                       | Ubuntu 20.04               |  No, use ubuntu20.04/Dockerfile |
 
-# Specify release of MATLAB to build. (use lowercase, default is r2024a)
-ARG MATLAB_RELEASE=r2024a
+# Specify release of MATLAB to build. (Default is R2024b)
+ARG MATLAB_RELEASE=R2024b
 
 # Specify version of python thats used by jupyter/base-notebbok
-# Using python 3.10 as default as it is the latest version compatible with MATLAB Engine for Python in R2024a, R2023b, R2023a & R2022b
+# Using python 3.10 as default as it is the latest version compatible with MATLAB Engine for Python in R2024b to R2022b
 ARG PYTHON_VERSION=3.10
 
 # Specify the list of products to install into MATLAB, 
@@ -86,7 +87,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get update \
     xubuntu-icon-theme \
     curl \
     xscreensaver \
-    && wget ${MATLAB_DEPS_REQUIREMENTS_FILE} -O ${MATLAB_DEPS_REQUIREMENTS_FILE_NAME}  \
+    && wget $(echo ${MATLAB_DEPS_REQUIREMENTS_FILE} | tr "[:upper:]" "[:lower:]") -O ${MATLAB_DEPS_REQUIREMENTS_FILE_NAME}  \
     && xargs -a ${MATLAB_DEPS_REQUIREMENTS_FILE_NAME} -r apt-get install --no-install-recommends -y \
     && apt-get remove -y gnome-screensaver  \
     && apt-get clean \

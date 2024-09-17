@@ -11,16 +11,16 @@ Pass the name of your existing MATLAB image to docker build using the `build-tim
 `Dockerfile.byoi` supports the following build-time variables:
 | Argument Name | Default value | Effect |
 |---|---|---|
-| [MATLAB_RELEASE](#build-an-image-for-a-different-release-of-matlab) | r2024a | The MATLAB release you are using. Used to install its software dependencies.|
+| [MATLAB_RELEASE](#build-an-image-for-a-different-release-of-matlab) | R2024b | The MATLAB release you are using. Used to install its software dependencies.|
 | [PYTHON_VERSION](#choose-version-of-python) | 3.10 | Select version of Python used by Jupyter. See [here](https://hub.docker.com/r/jupyter/base-notebook/tags?page=1&name=python-), for list of Python tags available for use. |
-| **MATLAB_IMAGE_NAME** | mathworks/matlab:r2024a | Specify the name of the Docker image that MATLAB should be extracted from. |
+| **MATLAB_IMAGE_NAME** | mathworks/matlab:R2024b | Specify the name of the Docker image that MATLAB should be extracted from. |
 | [LICENSE_SERVER](#build-an-image-with-license-server-information) | *unset* | The port and hostname of the machine that is running the Network License Manager, using the `port@hostname` syntax. For Example: `27000@MyServerName`. </br> Click [Using the Network License Manager](https://github.com/mathworks-ref-arch/matlab-dockerfile#use-the-network-license-manager) to learn more.|
 
-Listed below is an example of the command to build a Docker image that extracts MATLAB from the image `mathworks/matlab:r2024a` on DockerHub and installs it into `jupyter/base-notebook:python-3.10` with a License Server.
+Listed below is an example of the command to build a Docker image that extracts MATLAB from the image `mathworks/matlab:R2024b` on DockerHub and installs it into `jupyter/base-notebook:python-3.10` with a License Server.
 ```bash
-docker build --build-arg MATLAB_RELEASE=r2024a \
+docker build --build-arg MATLAB_RELEASE=R2024b \
                 --build-arg PYTHON_VERSION=3.10 \
-                --build-arg MATLAB_IMAGE_NAME=mathworks/matlab:r2024a \
+                --build-arg MATLAB_IMAGE_NAME=mathworks/matlab:R2024b \
                 --build-arg LICENSE_SERVER=12345@hostname.com \
                 -t matlab-notebook -f Dockerfile.byoi .
 ```
