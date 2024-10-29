@@ -31,6 +31,10 @@ on:
         description: 'If true, then an additional tag without OS information is generated.'
         required: true
         type: boolean
+      build_args:
+        description: 'String Array of comma separated build-args. Ex ["val1=1", "val2=2", "val3=3"] '
+        required: false
+        type: string
 
 jobs:
   build-push-image:
@@ -48,6 +52,12 @@ jobs:
           && echo "TAG_RELEASE_ONLY_PASCAL_CASE=${LOWER_CASE_MATLAB_RELEASE^}" >> "$GITHUB_OUTPUT" \
           && echo "TAG_RELEASE_AND_OS_CAMEL_CASE=${LOWER_CASE_MATLAB_RELEASE}-${{ inputs.os_info_tag }}" >> "$GITHUB_OUTPUT" \
           && echo "TAG_RELEASE_AND_OS_PASCAL_CASE=${LOWER_CASE_MATLAB_RELEASE^}-${{ inputs.os_info_tag }}" >> "$GITHUB_OUTPUT"
+
+      - name: Create list of build args from array of strings
+        id: build-args-as-list
+        uses: lucaspinheirogit/list-from-string-array-action@v1.4.3
+        with:
+              stringArray: ${{ inputs.build_args }}
 
       # See here for example: https://docs.docker.com/build/ci/github-actions/push-multi-registries/
       # -
@@ -72,19 +82,21 @@ jobs:
         if: ${{ inputs.is_default_os == false }}
         uses: docker/build-push-action@v4
         with:
+          build-args: ${{ steps.build-args-as-list.outputs.stringList }}
           context: ${{ inputs.docker_build_context }}
           platforms: linux/amd64
           push: true
           tags: |
             ${{ inputs.base_image_name }}:${{ steps.setup_image_tags.outputs.TAG_RELEASE_AND_OS_CAMEL_CASE }}
             ${{ inputs.base_image_name }}:${{ steps.setup_image_tags.outputs.TAG_RELEASE_AND_OS_PASCAL_CASE }}
-          build-args: MATLAB_RELEASE=${{ inputs.matlab_release_tag }}
 
+          
       # Example tags: r2023a-ubuntu20.04, R2023a-ubuntu20.04, r2023a, R2023a
       - name: Build & Push Image for latest OS
         if: ${{ inputs.is_default_os == true }}
         uses: docker/build-push-action@v4
         with:
+          build-args: ${{ steps.build-args-as-list.outputs.stringList }}
           context: ${{ inputs.docker_build_context }}
           platforms: linux/amd64
           push: true
@@ -93,6 +105,5 @@ jobs:
             ${{ inputs.base_image_name }}:${{ steps.setup_image_tags.outputs.TAG_RELEASE_ONLY_PASCAL_CASE }}
             ${{ inputs.base_image_name }}:${{ steps.setup_image_tags.outputs.TAG_RELEASE_AND_OS_CAMEL_CASE }}
             ${{ inputs.base_image_name }}:${{ steps.setup_image_tags.outputs.TAG_RELEASE_AND_OS_PASCAL_CASE }}
-          build-args: MATLAB_RELEASE=${{ inputs.matlab_release_tag }}
 
 

@@ -1,6 +1,6 @@
-# Copyright 2023-2024 The MathWorks, Inc.
-# Build & Publish matlab/ubuntu20.04/Dockerfile.mounted
-name: matlab/ubuntu20.04/Dockerfile.mounted
+# Copyright 2024 The MathWorks, Inc.
+# Build & Publish jupyter-mounted-matlab-notebook
+name: jupyter-mounted-matlab-notebook
 
 # Define when builds will occur:
 on:
@@ -9,7 +9,8 @@ on:
     branches:
       - 'main'
     paths:
-      - 'matlab/ubuntu20.04/Dockerfile.mounted'
+      - 'Dockerfile'
+      - '.github/workflows/**'
 
   # Run at 00:00 on every Monday (1st Day of the Week) (See: crontab.guru)
   schedule:
@@ -22,12 +23,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        matlab_release_tag: [r2024b, r2024a, r2023b, r2023a, r2022b, r2022a, r2021b, r2021a, r2020b]
+        matlab_release_tag: [R2024b, R2024a, R2023b, R2023a, R2022b]
     uses: ./.github/workflows/build-and-publish-docker-image.yml
     secrets: inherit
     with:
-        docker_build_context: './matlab/ubuntu20.04'
+        docker_build_context: '.'
         base_image_name: ghcr.io/${{ github.repository }}/jupyter-mounted-matlab-notebook
-        os_info_tag: 'ubuntu20.04'
+        os_info_tag: 'ubuntu22.04'
         matlab_release_tag: ${{ matrix.matlab_release_tag }}
-        is_default_os: false
+        is_default_os: true
+        build_args: '["MATLAB_RELEASE=${{ matrix.matlab_release_tag }}", "INSTALL_VNC=1", "INSTALL_MATLABENGINE=1", "MOUNT_MATLAB=1"]'
