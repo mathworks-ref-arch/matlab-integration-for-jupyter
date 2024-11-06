@@ -32,4 +32,4 @@ jobs:
         os_info_tag: 'ubuntu22.04'
         matlab_release_tag: ${{ matrix.matlab_release_tag }}
         is_default_os: true
-        build_args: '["MATLAB_RELEASE=${{ matrix.matlab_release_tag }}", "INSTALL_VNC=1", "INSTALL_MATLABENGINE=1", "MOUNT_MATLAB=1"]'
+        build_args_csv: MATLAB_RELEASE=${{ matrix.matlab_release_tag }},INSTALL_VNC=1,INSTALL_MATLABENGINE=1
