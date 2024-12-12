@@ -96,9 +96,6 @@ ARG MATLAB_RELEASE
 ARG MATLAB_PRODUCT_LIST
 ARG MATLAB_INSTALL_LOCATION
 
-# Temporary workaround to issue introduced in MPM 2024.3
-ENV MW_SPROOT_SETTINGSXML=1
-
 # Dont need to set HOME to install Support packages as jupyter images set HOME to NB_USER in all images, even for ROOT.
 RUN echo "Installing MATLAB using MPM..."
 RUN wget -q https://www.mathworks.com/mpm/glnxa64/mpm && \ 
