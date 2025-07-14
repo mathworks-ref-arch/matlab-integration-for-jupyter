@@ -58,7 +58,7 @@ ARG LICENSE_SERVER
 ARG NLM=${LICENSE_SERVER:+"-with-nlm"}
 
 # Both 22.04 & 24.04 ship with Python 3.11
-ARG UBUNTU_VERSION=22.04
+ARG UBUNTU_VERSION=24.04
 
 ######################################
 #  Stage 1 : Base Layer + matlab-deps
