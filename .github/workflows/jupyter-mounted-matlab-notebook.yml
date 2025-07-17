@@ -1,4 +1,4 @@
-# Copyright 2024 The MathWorks, Inc.
+# Copyright 2024-2025 The MathWorks, Inc.
 # Build & Publish jupyter-mounted-matlab-notebook
 name: jupyter-mounted-matlab-notebook
 
@@ -23,13 +23,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        matlab_release_tag: [R2024b, R2024a, R2023b, R2023a, R2022b]
+        matlab_release_tag: [R2025a, R2024b, R2024a, R2023b, R2023a, R2022b]
     uses: ./.github/workflows/build-and-publish-docker-image.yml
     secrets: inherit
     with:
         docker_build_context: '.'
         base_image_name: ghcr.io/${{ github.repository }}/jupyter-mounted-matlab-notebook
-        os_info_tag: 'ubuntu22.04'
+        os_info_tag: 'ubuntu24.04'
         matlab_release_tag: ${{ matrix.matlab_release_tag }}
         is_default_os: true
         build_args_csv: MATLAB_RELEASE=${{ matrix.matlab_release_tag }},INSTALL_VNC=1,INSTALL_MATLABENGINE=1,MOUNT_MATLAB=1
