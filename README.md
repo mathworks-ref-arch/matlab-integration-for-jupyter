@@ -8,7 +8,7 @@ To run MATLAB&reg; in Jupyter&reg; inside a container, use the [Dockerfile](./Do
 
 ## Run in GitHub Codespaces
 
-To run this container, click the button below to start a [GitHub Codespace](https://docs.github.com/en/codespaces/about-codespaces/what-are-codespaces) with a [pre-built image](#pre-built-images) for MATLAB R2026a.
+To run this container, click the button below to start a [GitHub Codespace](https://docs.github.com/en/codespaces/about-codespaces/what-are-codespaces) with a [pre-built image](#pre-built-images) for MATLAB R2026b.
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/mathworks-ref-arch/matlab-integration-for-jupyter?devcontainer_path=.devcontainer%2Fdevcontainer.json)
 
@@ -36,12 +36,12 @@ cd matlab-integration-for-jupyter
 ### Build & Run Docker Container
 Build the container with a name and tag of your choice.
 ```bash
-docker build -t mifj:R2026a .
+docker build -t mifj:R2026b .
 ```
 
 Run the container.
 ```bash
-docker run -it -p 8888:8888 --rm mifj:R2026a
+docker run -it -p 8888:8888 --rm mifj:R2026b
 ```
 
 To open JupyterLab, use your browser to visit the address printed in your console of the format `http://<hostname>:8888/?token=<token>`. The `hostname` is the name of the computer running Docker, and the `token` is the secret token printed in the console. 
@@ -59,7 +59,7 @@ The [Dockerfile](https://github.com/mathworks-ref-arch/matlab-dockerfile/blob/ma
 
 | Argument Name | Description | Default value |
 |---|---|---|
-| [MATLAB_RELEASE](#build-an-image-for-a-different-release-of-matlab) | The MATLAB release you want to install. | R2026a |
+| [MATLAB_RELEASE](#build-an-image-for-a-different-release-of-matlab) | The MATLAB release you want to install. | R2026b |
 | [MATLAB_PRODUCT_LIST](#build-an-image-with-a-specific-set-of-products) | Products to install as a space-separated list. For more information, see [MPM.md](https://github.com/mathworks-ref-arch/matlab-dockerfile/blob/main/MPM.md). For example: MATLAB Simulink Deep_Learning_Toolbox Fixed-Point_Designer. | MATLAB |
 | [MATLAB_INSTALL_LOCATION](#build-an-image-with-matlab-installed-to-a-specific-location) | The path to install MATLAB. | /opt/matlab |
 | [LICENSE_SERVER](#build-an-image-configured-to-use-a-license-server) | The port and hostname of the machine that is running the Network License Manager, using the port@hostname syntax. For example: *27000@MyServerName* | *Unset* |
@@ -78,13 +78,13 @@ docker build --build-arg MATLAB_RELEASE=R2019b -t mifj:R2019b .
 #### Build an Image with Specific Products
 To build an image with MATLAB and Simulink, run:
 ```bash
-docker build --build-arg MATLAB_PRODUCT_LIST='MATLAB Simulink' -t mifj:R2026a .
+docker build --build-arg MATLAB_PRODUCT_LIST='MATLAB Simulink' -t mifj:R2026b .
 ```
 
 #### Build an Image with MATLAB Installed in a Specific Location
 To build an image with MATLAB installed at `/opt/matlab`, use this command.
 ```bash
-docker build --build-arg MATLAB_INSTALL_LOCATION='/opt/matlab' -t mifj:R2026a .
+docker build --build-arg MATLAB_INSTALL_LOCATION='/opt/matlab' -t mifj:R2026b .
 ```
 
 #### Build an Image Configured to Use a License Server
@@ -92,14 +92,14 @@ docker build --build-arg MATLAB_INSTALL_LOCATION='/opt/matlab' -t mifj:R2026a .
 If you include the license server information with the `docker build` command, you do not have to provide it when running the container.
 ```bash
 # Build container with the License Server.
-docker build --build-arg LICENSE_SERVER=27000@MyServerName -t mifj:R2026a .
+docker build --build-arg LICENSE_SERVER=27000@MyServerName -t mifj:R2026b .
 
 # Run the container, without providing license information.
-docker run -it --rm -p 8888:8888 mifj:R2026a 
+docker run -it --rm -p 8888:8888 mifj:R2026b
 ```
 Alternatively, to provide the License Server information with `docker run`, you can use the environment variable `MLM_LICENSE_FILE`:
 ```bash
-docker run -it --rm -p 8888:8888 -e MLM_LICENSE_FILE=27000@MyServerName mifj:R2025a
+docker run -it --rm -p 8888:8888 -e MLM_LICENSE_FILE=27000@MyServerName mifj:R2026b
 ```
 
 For more information on using the Network License Manager, see [Use the Network License Manager](https://github.com/mathworks-ref-arch/matlab-dockerfile?tab=readme-ov-file#use-the-network-license-manager) for more information.
@@ -107,7 +107,7 @@ For more information on using the Network License Manager, see [Use the Network 
 #### Build an Image with the MATLAB Engine for Python
 To build the default image along with the MATLAB Engine for Python for a given MATLAB Release, run:
 ```bash
-docker build --build-arg INSTALL_MATLABENGINE=1 --build-arg MATLAB_RELEASE=R2026a -t mifj:R2026a .
+docker build --build-arg INSTALL_MATLABENGINE=1 --build-arg MATLAB_RELEASE=R2026b -t mifj:R2026b .
 ```
 For more information, see: 
 - [MATLAB Engine for Python](https://github.com/mathworks/matlab-engine-for-python) (GitHub).
@@ -120,7 +120,7 @@ For more information, see:
 #### Build an Image with the Option to Access Desktop Using VNC
 To build the default image along with the ability to access an XFCE Desktop using VNC, run:
 ```bash
-docker build --build-arg INSTALL_VNC=1 -t mifj:R2026a .
+docker build --build-arg INSTALL_VNC=1 -t mifj:R2026b .
 ```
 For more information, see [Jupyter Remote Desktop Proxy (GitHub)](https://github.com/jupyterhub/jupyter-remote-desktop-proxy).
 
@@ -144,7 +144,7 @@ Use the [Dockerfile Build Arguments](https://docs.docker.com/reference/dockerfil
 
 ```bash
 docker build --build-arg MOUNT_MATLAB=1 \
-             --build-arg MATLAB_RELEASE=R2026a \
+             --build-arg MATLAB_RELEASE=R2026b \
              -t mifj:mounted .
 ```
 The `MATLAB_RELEASE` argument ensures that the system dependencies required for MATLAB are installed in the container.
@@ -152,9 +152,9 @@ The `MATLAB_RELEASE` argument ensures that the system dependencies required for 
 Note: When you are mounting MATLAB on the container at run time, you cannot install MATLAB Engine for Python at build time.
 
 #### Specify Mount Location at Container Startup
-If MATLAB is installed in `/usr/local/MATLAB/R2026a` on your local machine, you can bind mount this folder to `/opt/matlab` using the command shown below:
+If MATLAB is installed in `/usr/local/MATLAB/R2026b` on your local machine, you can bind mount this folder to `/opt/matlab` using the command shown below:
 ```bash
-docker run -it --rm -v /usr/local/MATLAB/R2026a:/opt/matlab:ro -p 8888:8888 mifj:mounted 
+docker run -it --rm -v /usr/local/MATLAB/R2026b:/opt/matlab:ro -p 8888:8888 mifj:mounted
 ```
 For more information, see [Bind Mounts (Docker)](https://docs.docker.com/engine/storage/bind-mounts/).
 
@@ -166,9 +166,9 @@ This option is useful when you want to minimize the size of the container as ins
 To copy an existing MATLAB installation from another container image, specify the image name with the Docker Build Arguments `MATLAB_IMAGE_NAME` and `MATLAB_RELEASE` as shown below:
 
 ```bash
-# Copies MATLAB from the Dockerhub Image "mathworks/matlab:r2026a" into the image being built.
-docker build --build-arg MATLAB_IMAGE_NAME=mathworks/matlab:r2026a \
-             --build-arg MATLAB_RELEASE=R2026a \
+# Copies MATLAB from the Dockerhub Image "mathworks/matlab:r2026b" into the image being built.
+docker build --build-arg MATLAB_IMAGE_NAME=mathworks/matlab:r2026b \
+             --build-arg MATLAB_RELEASE=R2026b \
              -t mifj:copied .
 ```
 The `MATLAB_RELEASE` argument, ensures that the system dependencies required for MATLAB, are installed into the container.
@@ -186,12 +186,12 @@ These images are based on `jupyter/base-notebook:ubuntu-24.04` and include:
     * Only available in pre-built images newer than R2023b
     * See [Different Versions of OS or Python](#different-versions-of-os-or-python) for more information on installing the engine for older versions of MATLAB.
 
-**Available Tags**: `R2026a`, `R2025b`, `R2025a`, `R2024b`, `R2024a`, `R2023b`, `R2023a`, `R2022b`
+**Available Tags**: `R2026b`, `R2026a`, `R2025b`, `R2025a`, `R2024b`, `R2024a`, `R2023b`, `R2023a`, `R2022b`
 
 **Docker Pull Command**:
 ```bash
 # Substitute the tag with your desired version of MATLAB.
-docker pull ghcr.io/mathworks-ref-arch/matlab-integration-for-jupyter/jupyter-matlab-notebook:R2026a
+docker pull ghcr.io/mathworks-ref-arch/matlab-integration-for-jupyter/jupyter-matlab-notebook:R2026b
 ```
 ### jupyter-mounted-matlab-notebook
 These images are based on `jupyter/base-notebook:ubuntu-24.04` and include:
@@ -201,12 +201,12 @@ These images are based on `jupyter/base-notebook:ubuntu-24.04` and include:
     * Only available in pre-built images newer than R2023b
     * See [Compatibility for Different Versions of OS or Python](#compatibility-for-different-versions-of-os-or-python) for more information on installing the engine for older versions of MATLAB.
 
-**Available Tags**: `R2026a`, `R2025b`, `R2025a`, `R2024b`, `R2024a`, `R2023b`, `R2023a`, `R2022b`
+**Available Tags**: `R2026b`, `R2026a`, `R2025b`, `R2025a`, `R2024b`, `R2024a`, `R2023b`, `R2023a`, `R2022b`
 
 **Docker Pull Command**:
 ```bash
 # Substitute the tag with your desired version of MATLAB.
-docker pull ghcr.io/mathworks-ref-arch/matlab-integration-for-jupyter/jupyter-mounted-matlab-notebook:R2026a
+docker pull ghcr.io/mathworks-ref-arch/matlab-integration-for-jupyter/jupyter-mounted-matlab-notebook:R2026b
 ```
 Use the correct version of the image based on the MATLAB release you are mounting on the image.
 For example to mount `R2022b` from your local machine, that is installed in `/usr/local/MATLAB/R2022b`, use the following `docker run` command:
@@ -220,7 +220,7 @@ To build on older versions of Ubuntu or Python, update the base image used in th
 
 For example, this page lists `4d70cf8da953` as the tag for an image with `Python 3.10` on `Ubuntu 22.04`.
 
-To build an image with this base layer, update [Line 66 in the Dockerfile](https://github.com/mathworks-ref-arch/matlab-integration-for-jupyter/blob/main/Dockerfile#L66) to `FROM quay.io/jupyter/base-notebook:4d70cf8da953`.
+To build an image with this base layer, update [Line 67 in the Dockerfile](https://github.com/mathworks-ref-arch/matlab-integration-for-jupyter/blob/main/Dockerfile#L67) to `FROM quay.io/jupyter/base-notebook:4d70cf8da953`.
 
 This might be useful if your workflow depends on older versions of Python. For example the MATLAB Engine for Python only supports Python 3.11 from R2023b. Installing it on MATLAB releases older than R2023b would require an older version of Python, and you can use the approach above to build an image with the desired Python version. For more information about Python compatibility for MATLAB Products, see [Python Versions for MATLAB Products](https://mathworks.com/support/requirements/python-compatibility.html).
 

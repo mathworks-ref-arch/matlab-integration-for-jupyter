@@ -17,7 +17,7 @@
 # Example docker build commands are available at the end of this file.
 
 ## Setup Build Arguments, to chain multi-stage build selection.
-ARG MATLAB_RELEASE=R2026a
+ARG MATLAB_RELEASE=R2026b
 
 # See https://mathworks.com/help/install/ug/mpminstall.html for product list specfication
 ARG MATLAB_PRODUCT_LIST="MATLAB"
@@ -67,13 +67,14 @@ ARG UBUNTU_VERSION=24.04
 FROM quay.io/jupyter/base-notebook:ubuntu-${UBUNTU_VERSION} AS base1
 ARG UBUNTU_VERSION
 ARG MATLAB_RELEASE
+ARG TARGET_ARCH=amd64
 RUN echo "Installing dependencies for MATLAB ${MATLAB_RELEASE} on Ubuntu ${UBUNTU_VERSION}..."
 
 USER root
 
-ARG MATLAB_DEPS_URL="https://raw.githubusercontent.com/mathworks-ref-arch/container-images/main/matlab-deps/${MATLAB_RELEASE}/ubuntu${UBUNTU_VERSION}/base-dependencies.txt"
-ARG MATLAB_DEPENDENCIES="matlab-deps-${MATLAB_RELEASE}-base-dependencies.txt"
-ARG ADDITIONAL_PACKAGES="wget curl unzip ca-certificates xvfb git vim fluxbox gettext"
+ARG MATLAB_DEPS_URL="https://raw.githubusercontent.com/mathworks-ref-arch/container-images/main/matlab-deps/${MATLAB_RELEASE}/ubuntu${UBUNTU_VERSION}/base-dependencies-${TARGET_ARCH}.txt"
+ARG MATLAB_DEPENDENCIES="matlab-deps-${MATLAB_RELEASE}-base-dependencies-${TARGET_ARCH}.txt"
+ARG ADDITIONAL_PACKAGES="wget curl unzip ca-certificates xvfb git vim fluxbox openbox"
 RUN export DEBIAN_FRONTEND=noninteractive && apt-get update \
     && apt-get install --no-install-recommends -y ${ADDITIONAL_PACKAGES}\
     && wget $(echo ${MATLAB_DEPS_URL} | tr "[:upper:]" "[:lower:]") -O ${MATLAB_DEPENDENCIES} \
@@ -183,11 +184,18 @@ FROM base2${MEFP} AS base3
 #####################################################
 FROM base3 AS base3-with-jmp
 RUN echo "Installing jupyter-matlab-proxy..."
-RUN python -m pip install -U jupyter-matlab-proxy
+# Specify the URL to override the pip package index URL.
+# Leave blank to use the default PyPi repository.
+ARG PIP_INDEX_URL
+RUN PIP_INDEX_URL=${PIP_INDEX_URL} python -m pip install -U jupyter-matlab-proxy
+
 
 FROM base3-with-jmp AS base3-with-jmp-with-vnc
 RUN echo "Installing jupyter-remote-desktop-proxy ..."
-RUN python -m pip install -U jupyter-remote-desktop-proxy
+# Specify the URL to override the pip package index URL.
+# Leave blank to use the default PyPi repository.
+ARG PIP_INDEX_URL
+RUN PIP_INDEX_URL=${PIP_INDEX_URL} python -m pip install -U jupyter-remote-desktop-proxy
 USER root
 
 RUN export DEBIAN_FRONTEND=noninteractive && apt-get update \
@@ -231,6 +239,9 @@ FROM base4${NLM} AS final
 FROM final
 RUN echo "Done."
 USER $NB_USER
+
+# Create the MATLAB documents directory
+RUN mkdir -p "${HOME}/Documents/MATLAB"
 ENV MW_CONTEXT_TAGS=MATLAB_PROXY:JUPYTER:V1
 
 
